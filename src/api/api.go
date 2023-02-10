@@ -7,7 +7,7 @@ func NewRouter() (*http.ServeMux, error) {
 	m := http.NewServeMux()
 
 	// register the routes
-	m.HandleFunc("/hello", handleHello)
+	m.HandleFunc("/db", handleDb)
 
 	return m, nil
 }
