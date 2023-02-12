@@ -74,7 +74,7 @@ func (s sessionHandler) handleDbGet(w http.ResponseWriter, r *http.Request) {
 	log.Println("== handle DB get")
 
 	// get the name of the database from the URL
-	dbName := mux.Vars(r)["name"]
+	dbName := mux.Vars(r)["dbName"]
 
 	// try and retrieve the database from the session
 	db, err := s.client.GetDatabase(dbName)
@@ -93,7 +93,7 @@ func (s sessionHandler) handleDbDelete(w http.ResponseWriter, r *http.Request) {
 	log.Println("== handle db delete")
 
 	// get the name of the db to delete
-	dbName := mux.Vars(r)["name"]
+	dbName := mux.Vars(r)["dbName"]
 
 	// send the request to delete it
 	s.client.DeleteDatabase(dbName)
@@ -107,7 +107,7 @@ func (s sessionHandler) handleDbPut(w http.ResponseWriter, r *http.Request) {
 	log.Println("== handle db put")
 
 	// get the name of the database from the URL
-	dbName := mux.Vars(r)["name"]
+	dbName := mux.Vars(r)["dbName"]
 
 	// read the body
 	rb, err := ioutil.ReadAll(r.Body)

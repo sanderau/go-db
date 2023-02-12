@@ -20,9 +20,16 @@ func NewRouter() (*mux.Router, error) {
 	// Handle database functions
 	m.HandleFunc("/db", s.handleDbsGet).Methods(http.MethodGet)
 	m.HandleFunc("/db", s.handleDbPost).Methods(http.MethodPost)
-	m.HandleFunc("/db/{name}", s.handleDbGet).Methods(http.MethodGet)
-	m.HandleFunc("/db/{name}", s.handleDbPut).Methods(http.MethodPut)
-	m.HandleFunc("/db/{name}", s.handleDbDelete).Methods(http.MethodDelete)
+	m.HandleFunc("/db/{dbName}", s.handleDbGet).Methods(http.MethodGet)
+	m.HandleFunc("/db/{dbName}", s.handleDbPut).Methods(http.MethodPut)
+	m.HandleFunc("/db/{dbName}", s.handleDbDelete).Methods(http.MethodDelete)
+
+	// Handle the collection functions
+	m.HandleFunc("/db/{dbName}/collection", s.handleCollectionPost).Methods(http.MethodPost)
+	m.HandleFunc("/db/{dbName}/collection", s.handleCollectionsGet).Methods(http.MethodGet)
+	m.HandleFunc("/db/{dbName}/collection/{collectionName}", s.handleCollectionGet).Methods(http.MethodGet)
+	m.HandleFunc("/db/{dbName}/collection/{collectionName}", s.handleCollectionPut).Methods(http.MethodPut)
+	m.HandleFunc("/db/{dbName}/collection/{collectionName}", s.handleCollectionDelete).Methods(http.MethodDelete)
 
 	return m, nil
 }
