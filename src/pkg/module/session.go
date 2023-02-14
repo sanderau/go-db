@@ -88,6 +88,10 @@ func (s *SessionClient) DeleteDatabase(name string) {
 // helper function to get the index of a database.
 // returns -1 if database does not exist
 func (s SessionClient) getDatabaseIndex(name string) int {
+	if len(s.databases) == 0 {
+		return -1
+	}
+
 	for i, v := range s.databases {
 		if v.Name == name {
 			return i
@@ -100,6 +104,10 @@ func (s SessionClient) getDatabaseIndex(name string) int {
 // helper function to get the index of a collection
 // returns -1 if database does not exist
 func (s SessionClient) getCollectionIndex(dbIdx int, collectionName string) int {
+	if len(s.databases[dbIdx].Collections) == 0 {
+		return -1
+	}
+
 	for i, v := range s.databases[dbIdx].Collections {
 		if v.Name == collectionName {
 			return i
@@ -113,6 +121,9 @@ func (s SessionClient) getCollectionIndex(dbIdx int, collectionName string) int 
 func (s *SessionClient) AddCollection(nc model.Collection, dbName string) (model.Collection, error) {
 	// get the index of the database
 	index := s.getDatabaseIndex(dbName)
+	if index == -1 {
+		return model.Collection{}, errors.New(model.DbNotFound)
+	}
 
 	// check to see if it exists already
 	if s.getCollectionIndex(index, nc.Name) != -1 {

@@ -36,7 +36,7 @@ func (s sessionHandler) handleCollectionPost(w http.ResponseWriter, r *http.Requ
 	nc, err = s.client.AddCollection(nc, dbName)
 	if err != nil {
 		if err.Error() == model.DbNotFound {
-			w.WriteHeader(http.StatusBadRequest)
+			w.WriteHeader(http.StatusNotFound)
 			w.Write([]byte(err.Error()))
 			return
 		} else if err.Error() == model.CollectionExists {
