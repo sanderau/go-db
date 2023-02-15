@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"go-db/pkg/errors"
 	"go-db/pkg/model"
 	"io/ioutil"
 	"log"
@@ -35,11 +36,11 @@ func (s sessionHandler) handleCollectionPost(w http.ResponseWriter, r *http.Requ
 	// write the collection to the corresponding database
 	nc, err = s.client.AddCollection(nc, dbName)
 	if err != nil {
-		if err.Error() == model.DbNotFound {
+		if err.Error() == errors.DbNotFound {
 			w.WriteHeader(http.StatusNotFound)
 			w.Write([]byte(err.Error()))
 			return
-		} else if err.Error() == model.CollectionExists {
+		} else if err.Error() == errors.CollectionExists {
 			w.WriteHeader(http.StatusConflict)
 			w.Write([]byte(err.Error()))
 		} else {
@@ -61,7 +62,7 @@ func (s sessionHandler) handleCollectionsGet(w http.ResponseWriter, r *http.Requ
 	// get the collections from the database
 	collections, err := s.client.GetCollections(dbName)
 	if err != nil {
-		if err.Error() == model.DbNotFound {
+		if err.Error() == errors.DbNotFound {
 			w.WriteHeader(http.StatusBadRequest)
 		} else {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -84,9 +85,9 @@ func (s sessionHandler) handleCollectionGet(w http.ResponseWriter, r *http.Reque
 	// try and get specific collection from database
 	collection, err := s.client.GetCollection(dbName, collectionName)
 	if err != nil {
-		if err.Error() == model.DbNotFound {
+		if err.Error() == errors.DbNotFound {
 			w.WriteHeader(http.StatusNotFound)
-		} else if err.Error() == model.CollectionNotFound {
+		} else if err.Error() == errors.CollectionNotFound {
 			w.WriteHeader(http.StatusNotFound)
 		} else {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -104,6 +105,7 @@ func (s sessionHandler) handleCollectionPut(w http.ResponseWriter, r *http.Reque
 
 	// get the names for the database and collection
 	dbName := mux.Vars(r)["dbName"]
+	oldCollectionName := mux.Vars(r)["collectionName"]
 
 	// read the body
 	rb, err := ioutil.ReadAll(r.Body)
@@ -122,11 +124,11 @@ func (s sessionHandler) handleCollectionPut(w http.ResponseWriter, r *http.Reque
 	}
 
 	// try to modify collection if it exists
-	nc, err := s.client.PutCollection(dbName, c)
+	nc, err := s.client.PutCollection(dbName, oldCollectionName, c)
 	if err != nil {
-		if err.Error() == model.DbNotFound {
+		if err.Error() == errors.DbNotFound {
 			w.WriteHeader(http.StatusNotFound)
-		} else if err.Error() == model.CollectionNotFound {
+		} else if err.Error() == errors.CollectionNotFound {
 			w.WriteHeader(http.StatusNotFound)
 		} else {
 			w.WriteHeader(http.StatusInternalServerError)

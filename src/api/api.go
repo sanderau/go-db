@@ -31,5 +31,12 @@ func NewRouter() (*mux.Router, error) {
 	m.HandleFunc("/db/{dbName}/collection/{collectionName}", s.handleCollectionPut).Methods(http.MethodPut)
 	m.HandleFunc("/db/{dbName}/collection/{collectionName}", s.handleCollectionDelete).Methods(http.MethodDelete)
 
+	// Handle all of the document functions
+	m.HandleFunc("/db/{dbName}/collection/{collectionName}/document", s.handleDocumentPost).Methods(http.MethodPost)
+	m.HandleFunc("/db/{dbName}/collection/{collectionName}/document", s.handleDocumentsGet).Methods(http.MethodGet)
+	m.HandleFunc("/db/{dbName}/collection/{collectionName}/document/{id}", s.handleDocumentGet).Methods(http.MethodGet)
+	m.HandleFunc("/db/{dbName}/collection/{collectionName}/document/{id}", s.handleDocumentPut).Methods(http.MethodPut)
+	m.HandleFunc("/db/{dbName}/collection/{collectionName}/document/{id}", s.handleDocumentDelete).Methods(http.MethodDelete)
+
 	return m, nil
 }

@@ -1,9 +1,10 @@
 package model
 
-// constants for error handling
-const DbNotFound = "database not found"
-const CollectionExists = "collection already exists"
-const CollectionNotFound = "collection not found"
+import (
+	"encoding/json"
+
+	"github.com/google/uuid"
+)
 
 type Database struct {
 	Name        string       `json:"name"`
@@ -16,6 +17,6 @@ type Collection struct {
 }
 
 type Document struct {
-	ObjectID string
-	Data     []byte
+	ObjectID uuid.UUID
+	Data     json.RawMessage
 }
