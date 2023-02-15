@@ -4,64 +4,35 @@ import (
 	"encoding/json"
 	"go-db/pkg/errors"
 	"go-db/pkg/model"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
-
-	"github.com/gorilla/mux"
 )
-
-type urlVars struct {
-	dbName string
-	cName  string
-	id     string
-}
-
-// helper function to reduce boiler plate code when retrieving variables from the URL
-func _getVars(r *http.Request) urlVars {
-	var u urlVars
-
-	u.dbName = mux.Vars(r)["dbName"]
-	u.cName = mux.Vars(r)["collectionName"]
-	u.id = mux.Vars(r)["id"]
-
-	return u
-}
 
 func (s sessionHandler) handleDocumentPost(w http.ResponseWriter, r *http.Request) {
 	log.Println("== handle document post")
 
 	// get the names for the database and collection
-	dbName := mux.Vars(r)["dbName"]
-	cName := mux.Vars(r)["collectionName"]
+	u := _getVars(r)
 
 	// read the body
-	rb, err := ioutil.ReadAll(r.Body)
+	rb, err := io.ReadAll(r.Body)
 	if err != nil {
-		log.Println("ERR: Error reading the request body " + err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
+		errors.WriteError(w, r, err)
 		return
 	}
 
 	// unmarshall body into document struct
 	doc := model.Document{}
 	if err := json.Unmarshal(rb, &doc); err != nil {
-		log.Println("ERR: Error unmarshalling the json" + err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
+		errors.WriteError(w, r, err)
 		return
 	}
 
 	// put document into corresponding database=>collection
-	doc, err = s.client.PostDocument(dbName, cName, doc)
+	doc, err = s.client.PostDocument(u.dbName, u.cName, doc)
 	if err != nil {
-		if err.Error() == errors.DbNotFound {
-			w.WriteHeader(http.StatusNotFound)
-		} else if err.Error() == errors.CollectionNotFound {
-			w.WriteHeader(http.StatusNotFound)
-		} else {
-			w.WriteHeader(http.StatusInternalServerError)
-		}
-		w.Write([]byte(err.Error()))
+		errors.WriteError(w, r, err)
 		return
 	}
 
@@ -84,7 +55,37 @@ func (s sessionHandler) handleDocumentsGet(w http.ResponseWriter, r *http.Reques
 	}
 
 	// return the documents
-	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(docs)
+}
+
+func (s sessionHandler) handleDocumentsGetBySearch(w http.ResponseWriter, r *http.Request) {
+	log.Println("== handle documents get by search")
+
+	// get the names for the database and collection
+	u := _getVars(r)
+
+	// read the body
+	rb, err := io.ReadAll(r.Body)
+	if err != nil {
+		errors.WriteError(w, r, err)
+		return
+	}
+
+	// unmarshall body into search struct
+	search := model.Search{}
+	if err := json.Unmarshal(rb, &search); err != nil {
+		errors.WriteError(w, r, err)
+		return
+	}
+
+	// get documents by a search keyword
+	docs, err := s.client.GetDocumentsBySearch(u.dbName, u.cName, search)
+	if err != nil {
+		errors.WriteError(w, r, err)
+		return
+	}
+
+	// return the documents
 	json.NewEncoder(w).Encode(docs)
 }
 
@@ -102,7 +103,6 @@ func (s sessionHandler) handleDocumentGet(w http.ResponseWriter, r *http.Request
 	}
 
 	// return the document to user
-	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(doc)
 }
 
@@ -113,18 +113,16 @@ func (s sessionHandler) handleDocumentPut(w http.ResponseWriter, r *http.Request
 	u := _getVars(r)
 
 	// read the body
-	rb, err := ioutil.ReadAll(r.Body)
+	rb, err := io.ReadAll(r.Body)
 	if err != nil {
-		log.Println("ERR: Error reading the request body " + err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
+		errors.WriteError(w, r, err)
 		return
 	}
 
 	// unmarshall body into document struct
 	doc := model.Document{}
 	if err := json.Unmarshal(rb, &doc); err != nil {
-		log.Println("ERR: Error unmarshalling the json" + err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
+		errors.WriteError(w, r, err)
 		return
 	}
 
@@ -136,7 +134,6 @@ func (s sessionHandler) handleDocumentPut(w http.ResponseWriter, r *http.Request
 	}
 
 	// return the new doc and return success
-	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(newDoc)
 }
 

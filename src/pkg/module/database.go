@@ -2,6 +2,7 @@ package module
 
 import (
 	"errors"
+	myError "go-db/pkg/errors"
 	"go-db/pkg/model"
 )
 
@@ -10,7 +11,7 @@ func (s *SessionClient) AddDatabase(ndb model.Database) (model.Database, error) 
 	// check to see if the database exists already
 	_, err := s.GetDatabase(ndb.Name)
 	if err == nil {
-		return model.Database{}, errors.New("database already exists")
+		return model.Database{}, errors.New(myError.DbExists)
 	}
 
 	// add the new database to the session
@@ -30,7 +31,7 @@ func (s *SessionClient) GetDatabase(name string) (model.Database, error) {
 	}
 
 	// match could not be found return error
-	return model.Database{}, errors.New("dne")
+	return model.Database{}, errors.New(myError.DbNotFound)
 }
 
 // get all the databases for current sesions
@@ -50,19 +51,22 @@ func (s *SessionClient) PutDatabase(old string, new string) (model.Database, err
 	}
 
 	// if db by old name cannot be found return an error
-	return model.Database{}, errors.New("original database could not be found")
+	return model.Database{}, errors.New(myError.DbNotFound)
 }
 
 // delete a database
-func (s *SessionClient) DeleteDatabase(name string) {
-	index := -1
-	for i, v := range s.databases {
-		if v.Name == name {
-			index = i
-		}
+func (s *SessionClient) DeleteDatabase(name string) error {
+	// idempotent operation, so regardless if it exists or not return 204 to user
+	dIndex := s.getDatabaseIndex(name)
+	if dIndex == -1 {
+		return nil
 	}
 
-	if index != -1 {
-		s.databases = append(s.databases[:index], s.databases[index+1:]...)
+	// check to see if it has children
+	if len(s.databases[dIndex].Collections) != 0 {
+		return errors.New(myError.DatabaseHasKids)
 	}
+
+	s.databases = append(s.databases[:dIndex], s.databases[dIndex+1:]...)
+	return nil
 }

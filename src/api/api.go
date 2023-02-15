@@ -7,6 +7,27 @@ import (
 	"github.com/gorilla/mux"
 )
 
+type sessionHandler struct {
+	client *module.SessionClient
+}
+
+type urlVars struct {
+	dbName string
+	cName  string
+	id     string
+}
+
+// helper function to reduce boiler plate code when retrieving variables from the URL
+func _getVars(r *http.Request) urlVars {
+	var u urlVars
+
+	u.dbName = mux.Vars(r)["dbName"]
+	u.cName = mux.Vars(r)["collectionName"]
+	u.id = mux.Vars(r)["id"]
+
+	return u
+}
+
 func NewRouter() (*mux.Router, error) {
 	// create a new blank server to avoid using the global serve mux
 	m := mux.NewRouter()
@@ -34,6 +55,7 @@ func NewRouter() (*mux.Router, error) {
 	// Handle all of the document functions
 	m.HandleFunc("/db/{dbName}/collection/{collectionName}/document", s.handleDocumentPost).Methods(http.MethodPost)
 	m.HandleFunc("/db/{dbName}/collection/{collectionName}/document", s.handleDocumentsGet).Methods(http.MethodGet)
+	m.HandleFunc("/db/{dbName}/collection/{collectionName}/document/search", s.handleDocumentsGetBySearch).Methods(http.MethodGet)
 	m.HandleFunc("/db/{dbName}/collection/{collectionName}/document/{id}", s.handleDocumentGet).Methods(http.MethodGet)
 	m.HandleFunc("/db/{dbName}/collection/{collectionName}/document/{id}", s.handleDocumentPut).Methods(http.MethodPut)
 	m.HandleFunc("/db/{dbName}/collection/{collectionName}/document/{id}", s.handleDocumentDelete).Methods(http.MethodDelete)

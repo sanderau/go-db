@@ -20,3 +20,7 @@ type Document struct {
 	ObjectID uuid.UUID
 	Data     json.RawMessage
 }
+
+type Search struct {
+	Keyword string `json:"search"`
+}

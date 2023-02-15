@@ -1,8 +1,10 @@
 package module
 
 import (
+	"encoding/json"
 	"errors"
 	"go-db/pkg/model"
+	"strings"
 
 	myError "go-db/pkg/errors"
 
@@ -45,6 +47,41 @@ func (s *SessionClient) GetDocuments(dbName string, cName string) ([]model.Docum
 
 	// return all of the documents
 	return s.databases[dIndex].Collections[cIndex].Documents, nil
+}
+
+// get document by search
+func (s *SessionClient) GetDocumentsBySearch(dbName string, cName string, search model.Search) ([]model.Document, error) {
+	// first get the index of the database and collection
+	// if a db/collection of that name cannot be found return error
+	dIndex := s.getDatabaseIndex(dbName)
+	if dIndex == -1 {
+		return []model.Document{}, errors.New(myError.DbNotFound)
+	}
+
+	cIndex := s.getCollectionIndex(dIndex, cName)
+	if cIndex == -1 {
+		return []model.Document{}, errors.New(myError.CollectionNotFound)
+	}
+
+	// check to make sure there are documents before trying to search through them
+	if len(s.databases[dIndex].Collections[cIndex].Documents) == 0 {
+		return []model.Document{}, nil
+	}
+
+	// go through the documents and look for substrings
+	var docs []model.Document
+	for _, v := range s.databases[dIndex].Collections[cIndex].Documents {
+		data, err := json.Marshal(&v.Data)
+		if err != nil {
+			return []model.Document{}, err
+		}
+
+		if strings.Contains(string(data), search.Keyword) {
+			docs = append(docs, v)
+		}
+	}
+
+	return docs, nil
 }
 
 // get a specific document from the collection

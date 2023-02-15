@@ -4,7 +4,6 @@ import (
 	"errors"
 	myError "go-db/pkg/errors"
 	"go-db/pkg/model"
-	"log"
 )
 
 // add a collection to a database
@@ -78,14 +77,17 @@ func (s *SessionClient) PutCollection(dbName string, oldCollectionName string, n
 func (s *SessionClient) DeleteCollection(dbName string, cName string) error {
 	dIndex := s.getDatabaseIndex(dbName)
 	if dIndex == -1 {
-		log.Println(myError.DbNotFound)
-		return nil
+		return errors.New(myError.DbNotFound)
 	}
 
 	cIndex := s.getCollectionIndex(dIndex, cName)
 	if cIndex == -1 {
-		log.Println(myError.CollectionNotFound)
 		return nil
+	}
+
+	// cannot delete collection while it has elements
+	if len(s.databases[dIndex].Collections[cIndex].Documents) != 0 {
+		return errors.New(myError.CollectionsHasKids)
 	}
 
 	s.databases[dIndex].Collections = append(s.databases[dIndex].Collections[:cIndex], s.databases[dIndex].Collections[cIndex+1:]...)
