@@ -1,0 +1,248 @@
+{
+	"info": {
+		"_postman_id": "7fdda044-5b25-466a-9c21-f3d292b3b8dc",
+		"name": "Documents",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12883311"
+	},
+	"item": [
+		{
+			"name": "Create Document",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"successful create database\", function() {",
+							"    pm.response.to.have.status(201)",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"data\": {\n    \"_id\": \"63ec07c9e85de72722043a65\",\n    \"index\": 0,\n    \"guid\": \"e1615a61-8905-4326-99a4-30da48e4de6f\",\n    \"isActive\": true,\n    \"balance\": \"$3,116.35\",\n    \"picture\": \"http://placehold.it/32x32\",\n    \"age\": 21,\n    \"eyeColor\": \"brown\",\n    \"name\": \"Parks Castaneda\",\n    \"gender\": \"male\",\n    \"company\": \"twitter\",\n    \"email\": \"parkscastaneda@terascape.com\",\n    \"phone\": \"+1 (922) 562-3899\",\n    \"address\": \"833 John Street, Shindler, New Hampshire, 5538\",\n    \"about\": \"Deserunt nostrud qui esse Lorem nulla cillum cillum reprehenderit. Quis et ullamco ut ad et elit proident voluptate id. Lorem excepteur sit sit incididunt. Et deserunt sint voluptate adipisicing minim esse consequat incididunt ipsum adipisicing aliqua esse ut. Cupidatat laboris ad eiusmod voluptate cupidatat enim Lorem velit. Proident ex qui ullamco ipsum nisi sunt ullamco et nisi ad laborum. Anim proident labore elit ut deserunt eu culpa eu veniam do.\\r\\n\",\n    \"registered\": \"2015-09-24T07:03:26 +07:00\",\n    \"latitude\": -64.352968,\n    \"longitude\": -106.517952,\n    \"tags\": [\n      \"culpa\",\n      \"in\",\n      \"cillum\",\n      \"labore\",\n      \"enim\",\n      \"ullamco\",\n      \"officia\"\n    ],\n    \"friends\": [\n      {\n        \"id\": 0,\n        \"name\": \"Woodward Jones\"\n      },\n      {\n        \"id\": 1,\n        \"name\": \"Alvarez Haynes\"\n      },\n      {\n        \"id\": 2,\n        \"name\": \"Josephine George\"\n      }\n    ],\n    \"greeting\": \"Hello, Parks Castaneda! You have 6 unread messages.\",\n    \"favoriteFruit\": \"banana\"\n  }\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/db/one/collection/one/document",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"db",
+						"one",
+						"collection",
+						"one",
+						"document"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Documents",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"successful create database\", function() {",
+							"    pm.response.to.have.status(200)",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/db/one/collection/one/document",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"db",
+						"one",
+						"collection",
+						"one",
+						"document"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Documents by search",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"successful create database\", function() {",
+							"    pm.response.to.have.status(200)",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"search\": \"twitter\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/db/one/collection/one/document/search",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"db",
+						"one",
+						"collection",
+						"one",
+						"document",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Specific Document",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"successful create database\", function() {",
+							"    pm.response.to.have.status(200)",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/db/one/collection/one/document/ce7924cd-4563-4385-b842-b29c48bb71b6",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"db",
+						"one",
+						"collection",
+						"one",
+						"document",
+						"ce7924cd-4563-4385-b842-b29c48bb71b6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Document",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"successful create database\", function() {",
+							"    pm.response.to.have.status(200)",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"data\": {\n        \"epic\": \"on\"\n    }\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/db/one/collection/one/document/cdff37f6-a69e-492d-a08f-df9690d51368",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"db",
+						"one",
+						"collection",
+						"one",
+						"document",
+						"cdff37f6-a69e-492d-a08f-df9690d51368"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Document Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"successful create database\", function() {",
+							"    pm.response.to.have.status(204)",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"data\": {\n        \"epic\": \"on\"\n    }\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/db/one/collection/one/document/aba9e47b-f5bc-43d6-b540-822175c44a41",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"db",
+						"one",
+						"collection",
+						"one",
+						"document",
+						"aba9e47b-f5bc-43d6-b540-822175c44a41"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

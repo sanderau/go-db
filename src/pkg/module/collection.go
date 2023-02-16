@@ -68,6 +68,13 @@ func (s *SessionClient) PutCollection(dbName string, oldCollectionName string, n
 		return model.Collection{}, errors.New(myError.CollectionNotFound)
 	}
 
+	// check to see if the collection already exists
+	for _, v := range s.databases[dIndex].Collections {
+		if v.Name == nc.Name {
+			return model.Collection{}, errors.New(myError.CollectionExists)
+		}
+	}
+
 	s.databases[dIndex].Collections[cIndex].Name = nc.Name
 
 	return s.databases[dIndex].Collections[cIndex], nil

@@ -43,6 +43,18 @@ func (s *SessionClient) GetDatabases() ([]model.Database, error) {
 func (s *SessionClient) PutDatabase(old string, new string) (model.Database, error) {
 	// sort through current databases. if db by old name can be found
 	// change name, and return newly named db.
+	if len(s.databases) == 0 {
+		return model.Database{}, errors.New(myError.DbNotFound)
+	}
+
+	// check to see if the new one already exists
+	for _, v := range s.databases {
+		if v.Name == new {
+			// database already exists cannot update
+			return model.Database{}, errors.New(myError.DbExists)
+		}
+	}
+
 	for i, v := range s.databases {
 		if v.Name == old {
 			s.databases[i].Name = new
